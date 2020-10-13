@@ -48,65 +48,88 @@ $(function () {
 
     const boxButtons = document.querySelectorAll('.img-container');
     const boxContainer = document.querySelector('.lightbox-container');
-    const boxItem = document.querySelector('.lightbox-item');
-    const btnClose = document.querySelector('.lightbox-close');
+    const lengthArray = boxButtons.length - 1;
+    let index = 0;
+    let arrayCalledImg = [];
 
     boxButtons.forEach((buttonImg) => {
+
+        arrayCalledImg[index] = getUrlImgFromHtml(buttonImg.children[0].outerHTML);
+        index++;
+
         buttonImg.addEventListener('click', (eventImg) => {
+
+            /* включили показ модуля */
             boxContainer.classList.add('show');
-            //console.log(`click to event: ${eventImg.currentTarget.children[0].outerHTML}`);
 
+            /* нашли название картинки */
             const urlImg = getUrlImgFromHtml(eventImg.currentTarget.children[0].outerHTML);
-            
-            clickBtn(urlImg);
-            //const background = boxContainer.children[0].children[1].style.background;
-            //console.log(background);
+            /* заменили картинку при включение модуля */
+            boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${urlImg}")`;
 
-            /*btnClose.addEventListener('click', () => {
-                boxContainer.classList.remove('show');
-            })*/
+            /* чтобы передать индекс и длину массива */
+            index = 0;
+            arrayCalledImg.forEach((item) => {
+                index++;
+                if (urlImg === item) {
+                    selectNextItemBy(index - 1, arrayCalledImg, lengthArray);
+                }
+            })
         })
+    })
+
+    const btnClose = document.querySelector('.lightbox-close');
+
+    btnClose.addEventListener('click', () => {
+        boxContainer.classList.remove('show');
     })
 
 });
 
 /* запускается когда вызовут */
-function clickBtn(img) {
+function selectNextItemBy(index, array, length) {
+
     const boxControls = document.querySelectorAll('.lightbox-control');
+    const boxContainer = document.querySelector('.lightbox-container');
 
     boxControls.forEach((button) => {
         button.addEventListener('click', (e) => {
 
-            //console.log(`click to button: ${buttonImg.children[0].outerHTML}`);
-            //console.log(`click to button: ${buttonImg.children[0].src}`);
-            setUrlForHtmlStyle(img);
-
             if (e.currentTarget.classList.contains('btnRight')) {
-                console.log('вправа');
+                index++;
+                //console.log(`вправа ${index}`);
 
             } else {
-                console.log('влево');
+                index--;
+                //console.log(`влево ${index}`);
             }
+
+            if (index > length) {
+                index = 0;
+            } else if (index < 0) {
+                index = length;
+            }
+
+            //const imgFromArray = selectImage(index);
+            //boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${imgFromArray}")`;
+            boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${array[index]}")`;
         })
     })
 }
 
 /* запускается когда вызовут */
 function getUrlImgFromHtml(str) {
+
     const indexStartUrl = str.indexOf('/');
     const indexEndUrl = str.indexOf(`"`, indexStartUrl);
 
     return srcImg = str.substring(indexStartUrl + 1, indexEndUrl);
 }
 
-/* запускается когда вызовут */
-function setUrlForHtmlStyle(calledImg) {
-    const boxContainer = document.querySelector('.lightbox-container');
-    const boxItem = document.querySelector('.lightbox-item');
-    const urlSrc = "../img/cupcake-3.jpeg";
+/* находим картинку по индекс, если вдруг нету самого массива */
+/*function selectImage(count) {
 
-    boxContainer.children[0].children[1].style.background = `url("./img/${calledImg}")`;
-    alert(boxItem.style.cssText);
-    boxItem.style.backgroundImage = `url("./img/${calledImg}")`;
-    alert(boxItem.style.backgroundImage);
-}
+    const boxButtons = document.querySelectorAll('.img-container');
+
+    return urlImg = getUrlImgFromHtml(boxButtons[count].children[0].outerHTML);
+}*/
