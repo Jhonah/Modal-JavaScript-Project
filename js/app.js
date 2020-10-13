@@ -48,16 +48,29 @@ $(function () {
 
     const boxButtons = document.querySelectorAll('.img-container');
     const boxContainer = document.querySelector('.lightbox-container');
-    const lengthArray = boxButtons.length - 1;
+
+    const images = document.querySelectorAll('.store-img');
+
+    const length = boxButtons.length - 1;
     let index = 0;
     let arrayCalledImg = [];
+
+    images.forEach((image) => {
+        // found
+        //console.log(`images: ${image.src}`);
+    })
 
     boxButtons.forEach((buttonImg) => {
 
         arrayCalledImg[index] = getUrlImgFromHtml(buttonImg.children[0].outerHTML);
         index++;
+        // undefined
+        //console.log(`boxButtons: ${buttonImg.src}`);        
 
         buttonImg.addEventListener('click', (eventImg) => {
+
+            //console.log(eventImg.target.src);
+            let image = eventImg.target.src;
 
             /* включили показ модуля */
             boxContainer.classList.add('show');
@@ -65,32 +78,24 @@ $(function () {
             /* нашли название картинки */
             const urlImg = getUrlImgFromHtml(eventImg.currentTarget.children[0].outerHTML);
             /* заменили картинку при включение модуля */
-            boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${urlImg}")`;
+            //boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${urlImg}")`;
+            boxContainer.children[0].children[1].style.backgroundImage = `url(${image})`;
 
+            index = arrayCalledImg.indexOf(urlImg);
+            //selectNextItemBy(index, arrayCalledImg, length);
             /* чтобы передать индекс и длину массива */
-            index = 0;
+            /*index = 0;
             arrayCalledImg.forEach((item) => {
                 index++;
                 if (urlImg === item) {
-                    selectNextItemBy(index - 1, arrayCalledImg, lengthArray);
+                    selectNextItemBy(index - 1, arrayCalledImg, length);
                 }
-            })
+            })*/
         })
     })
 
-    const btnClose = document.querySelector('.lightbox-close');
-
-    btnClose.addEventListener('click', () => {
-        boxContainer.classList.remove('show');
-    })
-
-});
-
-/* запускается когда вызовут */
-function selectNextItemBy(index, array, length) {
-
     const boxControls = document.querySelectorAll('.lightbox-control');
-    const boxContainer = document.querySelector('.lightbox-container');
+    //const boxContainer = document.querySelector('.lightbox-container');
 
     boxControls.forEach((button) => {
         button.addEventListener('click', (e) => {
@@ -112,10 +117,23 @@ function selectNextItemBy(index, array, length) {
 
             //const imgFromArray = selectImage(index);
             //boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${imgFromArray}")`;
-            boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${array[index]}")`;
+
+            boxContainer.children[0].children[1].style.backgroundImage = `url("./img/${arrayCalledImg[index]}")`;
         })
     })
-}
+
+    const btnClose = document.querySelector('.lightbox-close');
+
+    btnClose.addEventListener('click', () => {
+        boxContainer.classList.remove('show');
+    })
+
+});
+
+/* запускается когда вызовут */
+/*function selectNextItemBy(index, array, length) {
+
+}*/
 
 /* запускается когда вызовут */
 function getUrlImgFromHtml(str) {
